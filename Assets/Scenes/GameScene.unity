@@ -166,7 +166,7 @@ Camera:
   m_FOVAxisMode: 0
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
-  m_FocalLength: 50
+  m_FocalLength: 20.78461
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -175,7 +175,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 60.000004
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -436,37 +436,6 @@ Transform:
   m_Father: {fileID: 2048951924}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &888445190
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 888445191}
-  m_Layer: 0
-  m_Name: Commit
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &888445191
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 888445190}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.80085003, y: 5.4442058, z: -2.4217415}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 7
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1077015161
 GameObject:
   m_ObjectHideFlags: 0
@@ -482,7 +451,7 @@ GameObject:
   - component: {fileID: 1077015166}
   m_Layer: 0
   m_Name: StartingBlock
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -787,6 +756,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   blockPrefab: {fileID: 914669951481353214, guid: 3fc42390a14b75742bd2fed378e02410,
     type: 3}
+  blockSpawned: {fileID: 0}
+  blockRB: {fileID: 0}
   movePositionParent: {fileID: 2048951923}
   movePosLeft:
   - {fileID: 1600454729}
@@ -794,6 +765,9 @@ MonoBehaviour:
   movePosRight:
   - {fileID: 2098219837}
   - {fileID: 1618187154}
+  changeMovePos: 0
+  changeDirection: 0
+  speed: 1
 --- !u!1 &2048951923
 GameObject:
   m_ObjectHideFlags: 0
@@ -803,9 +777,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2048951924}
+  - component: {fileID: 2048951925}
   m_Layer: 0
   m_Name: MovePosition
-  m_TagString: Untagged
+  m_TagString: Finish
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -829,6 +804,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &2048951925
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2048951923}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 12, y: 0.5, z: 12}
+  m_Center: {x: 0, y: -5, z: 0}
 --- !u!1 &2098219837
 GameObject:
   m_ObjectHideFlags: 0

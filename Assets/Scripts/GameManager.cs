@@ -6,8 +6,8 @@ public class GameManager : MonoBehaviour
 {
     //Reference for blocks
     public GameObject blockPrefab;
-    private GameObject blockSpawned;
-    private Rigidbody blockRB;
+    public GameObject blockSpawned;
+    public Rigidbody blockRB;
 
     //Moving Position
     public GameObject movePositionParent;
@@ -18,15 +18,16 @@ public class GameManager : MonoBehaviour
     private float startTime;
     private float endTime;
     private float touchTime;
-    private bool changeMovePos;
-    private bool changeDirection;
+    public bool changeMovePos;
+    public bool changeDirection;
     public static bool isDropped;
     public static bool isSpawned;
-    static float t = 0;
+    public float speed = 1;
 
     private void Start()
     {
         isDropped = false;
+        changeMovePos = true;
 
         SpawnBlock();
     }
@@ -68,91 +69,81 @@ public class GameManager : MonoBehaviour
 
         if (changeMovePos)
         {
+            Debug.Log("Spawn Left");
             Vector3 pos = new Vector3(movePosLeft[0].transform.position.x, movePositionParent.transform.position.y, movePosLeft[0].transform.position.z);
-            blockSpawned = Instantiate(blockPrefab, pos, Quaternion.identity);
-            
+            blockSpawned = Instantiate(blockPrefab, pos, Quaternion.identity); 
         }
         else
         {
+            Debug.Log("Spawn Right");
             Vector3 pos = new Vector3(movePosRight[0].transform.position.x, movePositionParent.transform.position.y, movePosRight[0].transform.position.z);
             blockSpawned = Instantiate(blockPrefab, pos, Quaternion.identity);
-            Debug.Log("Z: " + blockSpawned.transform.position.z);
         }
 
+        blockSpawned.GetComponent<MeshRenderer>().material.color = Random.ColorHSV();
+
         blockRB = blockSpawned.GetComponent<Rigidbody>();
-        blockRB.useGravity = true;
-        blockRB.constraints = RigidbodyConstraints.None;
-        blockRB.constraints = RigidbodyConstraints.FreezeRotation;
+        blockRB.useGravity = false;
 
         isSpawned = true;
     }
 
     public void MoveBlock()
     {
+        if (blockSpawned.transform.position.x <= movePosLeft[0].transform.position.x || blockSpawned.transform.position.z >= movePosRight[0].transform.position.z)
+        {
+            changeDirection = true;
+        }
+        else if (blockSpawned.transform.position.x >= movePosLeft[1].transform.position.x || blockSpawned.transform.position.z <= movePosRight[1].transform.position.z)
+        {
+            changeDirection = false;
+        }
+
         if (changeMovePos)
         {
             Mathf.Clamp(blockSpawned.transform.position.x, movePosLeft[0].transform.position.x, movePosLeft[1].transform.position.x);
 
             if (changeDirection)
             {
-                blockSpawned.transform.position = new Vector3(Mathf.Lerp(movePosLeft[0].transform.position.x, movePosLeft[1].transform.position.x, t), 0, 0);
-                t += 1.0f * Time.deltaTime;
+                blockSpawned.transform.position = new Vector3(blockSpawned.transform.position.x + speed * Time.deltaTime, blockSpawned.transform.position.y, blockSpawned.transform.position.z);
             }
             else
             {
-                blockSpawned.transform.position = new Vector3(Mathf.Lerp(movePosLeft[1].transform.position.x, movePosLeft[0].transform.position.x, t), 0, 0);
-                t -= 1.0f * Time.deltaTime;
+                blockSpawned.transform.position = new Vector3(blockSpawned.transform.position.x - speed * Time.deltaTime, blockSpawned.transform.position.y, blockSpawned.transform.position.z);
             }
         }
         else
         {
-            Mathf.Clamp(blockSpawned.transform.position.z, movePosRight[1].transform.position.x, movePosRight[0].transform.position.x);
+            Mathf.Clamp(blockSpawned.transform.position.z, movePosRight[1].transform.position.z, movePosRight[0].transform.position.z);
 
             if (changeDirection)
             {
-                blockSpawned.transform.position = new Vector3(0, 0, Mathf.Lerp(movePosRight[0].transform.position.x, movePosRight[1].transform.position.x, t));
-                t -= 1.0f * Time.deltaTime;
+                blockSpawned.transform.position = new Vector3(blockSpawned.transform.position.x, blockSpawned.transform.position.y, blockSpawned.transform.position.z - speed * Time.deltaTime);
             }
             else
             {
-                blockSpawned.transform.position = new Vector3(0, 0, Mathf.Lerp(movePosRight[1].transform.position.x, movePosRight[0].transform.position.x, t));
-                t += 1.0f * Time.deltaTime;
+                blockSpawned.transform.position = new Vector3(blockSpawned.transform.position.x, blockSpawned.transform.position.y, blockSpawned.transform.position.z + speed * Time.deltaTime);
             }
         }
 
-        if(blockSpawned.transform.position.x == movePosLeft[0].transform.position.x || blockSpawned.transform.position.z == movePosRight[0].transform.position.x)
-        {
-            changeDirection = true;
-
-            if (changeMovePos)
-            {
-                t = movePosLeft[0].transform.position.x;
-            }
-            else
-            {
-                t = movePosRight[0].transform.position.z;
-            }
-        }
-        else if(blockSpawned.transform.position.x == movePosLeft[1].transform.position.x || blockSpawned.transform.position.z == movePosRight[1].transform.position.z)
-        {
-            changeDirection = false;
-
-            if (changeMovePos)
-            {
-                t = movePosLeft[1].transform.position.x;
-            }
-            else
-            {
-                t = movePosRight[1].transform.position.z;
-            }
-        }
+       
     }
 
     public void DropBlock()
     {
-        blockRB.useGravity = false;
+        Debug.Log("Dropped");
+        blockRB.useGravity = true;
+        blockSpawned = null;
 
-        blockRB.constraints = RigidbodyConstraints.FreezePositionX;
-        blockRB.constraints = RigidbodyConstraints.FreezePositionZ;
+        isSpawned = false;
+
+        if (changeMovePos)
+        {
+            changeMovePos = false;
+        }
+        else
+        {
+            changeMovePos = true;
+        } 
     }
 }
