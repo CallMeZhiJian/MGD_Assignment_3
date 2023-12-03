@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -29,11 +30,15 @@ public class GameManager : MonoBehaviour
     public int score;
     public int highScore;
 
+    //UI stuffs
+    public TextMeshProUGUI scoreText;
+
     private void Start()
     {
         isDropped = false;
         changeMovePos = true;
         score = 0;
+        scoreText.text = score.ToString();
 
         SpawnBlock();
     }
@@ -76,13 +81,13 @@ public class GameManager : MonoBehaviour
         if (changeMovePos)
         {
             Debug.Log("Spawn Left");
-            Vector3 pos = new Vector3(movePosLeft[0].transform.position.x, movePositionParent.transform.position.y, movePosLeft[0].transform.position.z);
+            Vector3 pos = new(movePosLeft[0].transform.position.x, movePositionParent.transform.position.y, movePosLeft[0].transform.position.z);
             blockSpawned = Instantiate(blockPrefab, pos, Quaternion.identity); 
         }
         else
         {
             Debug.Log("Spawn Right");
-            Vector3 pos = new Vector3(movePosRight[0].transform.position.x, movePositionParent.transform.position.y, movePosRight[0].transform.position.z);
+            Vector3 pos = new(movePosRight[0].transform.position.x, movePositionParent.transform.position.y, movePosRight[0].transform.position.z);
             blockSpawned = Instantiate(blockPrefab, pos, Quaternion.identity);
         }
 
@@ -92,6 +97,7 @@ public class GameManager : MonoBehaviour
         blockRB.useGravity = false;
 
         isSpawned = true;
+        isDropped = false;
     }
 
     public void MoveBlock()
@@ -179,5 +185,7 @@ public class GameManager : MonoBehaviour
                 score++;
             }
         }
+
+        scoreText.text = score.ToString();
     }
 }
