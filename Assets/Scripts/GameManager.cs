@@ -6,8 +6,8 @@ public class GameManager : MonoBehaviour
 {
     //Reference for blocks
     public GameObject blockPrefab;
-    public GameObject blockSpawned;
-    public Rigidbody blockRB;
+    private GameObject blockSpawned;
+    private Rigidbody blockRB;
 
     //Moving Position
     public GameObject movePositionParent;
@@ -18,16 +18,22 @@ public class GameManager : MonoBehaviour
     private float startTime;
     private float endTime;
     private float touchTime;
+
     public bool changeMovePos;
-    public bool changeDirection;
+    private bool changeDirection;
+
     public static bool isDropped;
     public static bool isSpawned;
-    public float speed = 1;
+
+    public float speed = 2;
+    public int score;
+    public int highScore;
 
     private void Start()
     {
         isDropped = false;
         changeMovePos = true;
+        score = 0;
 
         SpawnBlock();
     }
@@ -145,5 +151,33 @@ public class GameManager : MonoBehaviour
         {
             changeMovePos = true;
         } 
+    }
+
+    public void AddScore(GameObject block)
+    {
+        if (!changeMovePos)
+        {
+            Debug.Log("X");
+            if(block.transform.position.x <= 0.1 && block.transform.position.x >= -0.1)
+            {
+                score += 2;
+            }
+            else
+            {
+                score++;
+            }
+        }
+        else
+        {
+            Debug.Log("Z");
+            if(block.transform.position.z <= 0.1 && block.transform.position.z >= -0.1)
+            {
+                score += 2;
+            }
+            else
+            {
+                score++;
+            }
+        }
     }
 }

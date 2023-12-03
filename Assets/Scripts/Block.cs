@@ -15,18 +15,16 @@ public class Block : MonoBehaviour
     {
         if (collision.collider.CompareTag("Player"))
         {
-            Debug.Log("Spawned");
+            tag = "Untagged";
             Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y + 1, Camera.main.transform.position.z);
             GameManager.isDropped = false;
-            gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+            GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
             if (!GameManager.isSpawned)
             {
+                gameManager.speed += 0.5f;
                 gameManager.SpawnBlock();
-            }      
-        }
-        else if (collision.collider.CompareTag("Finish"))
-        {
-            Debug.Log("Lose, On result");
+                gameManager.AddScore(gameObject);
+            }   
         }
     }
 }
