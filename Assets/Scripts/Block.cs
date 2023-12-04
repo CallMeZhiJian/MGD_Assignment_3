@@ -37,7 +37,7 @@ public class Block : MonoBehaviour
     {
         if (other.CompareTag("Finish"))
         {
-            Debug.Log("Lose");
+            gameManager.ShowResult();
         }
     }
 }

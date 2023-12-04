@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Cinemachine;
-public class GameManager : MonoBehaviour
+using UnityEngine.UI;
+
+public class GameManager : UIManager
 {
     public CinemachineVirtualCamera CineCam;
 
@@ -12,7 +14,7 @@ public class GameManager : MonoBehaviour
     private GameObject blockSpawned;
     [HideInInspector] public GameObject blockPrev;
     private GameObject blockPrev2;
-    public Rigidbody blockRB;
+    private Rigidbody blockRB;
 
     //Moving Position
     public GameObject movePositionParent;
@@ -31,7 +33,7 @@ public class GameManager : MonoBehaviour
     public static bool isSpawned;
 
     [HideInInspector] public float speed = 2;
-    public float scale = 3;
+    [HideInInspector] public float scale = 3;
     private int score;
     private int highScore;
     private int blockCount;
@@ -43,42 +45,72 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        CineCam = GameObject.Find("CineCam").GetComponent<CinemachineVirtualCamera>();
+        SoundButton = GameObject.Find("SoundButton");
+        PauseButton = GameObject.Find("PauseButton");
+        PauseScreen = GameObject.Find("PauseScreen");
+        ResultScreen = GameObject.Find("ResultScreen");
+
+        PauseScreen.SetActive(false);
+        ResultScreen.SetActive(false);
+
+        Time.timeScale = 1;
+
         isDropped = false;
         changeMovePos = true;
+        
         blockCount = 0;
+        speed = 2;
+        scale = 3;
         score = 0;
+
         scoreTextInGame.text = score.ToString();
 
         SpawnBlock();
+
+        AudioManager.instance.PlayBGM();
     }
 
     private void Update()
     {
+        if (AudioManager.instance._BGMSource.mute || AudioManager.instance._SFXSource.mute)
+        {
+            SoundButton.GetComponent<Image>().sprite = SoundMute;
+        }
+        else
+        {
+            SoundButton.GetComponent<Image>().sprite = SoundOn;
+        }
+
         if (isSpawned)
         {
             MoveBlock();
         }
 
+        var touchArea = new Rect(0, 0, Screen.width, Screen.height * 0.8f);
+
         if (Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);
-
-            if (touch.phase == TouchPhase.Began)
+            if (touchArea.Contains(touch.position) && !isPaused)
             {
-                startTime = Time.time;
-            }
+                if (touch.phase == TouchPhase.Began)
+                {
+                    startTime = Time.time;
+                }
 
-            else if (touch.phase == TouchPhase.Ended)
-            {
-                endTime = Time.time;
+                else if (touch.phase == TouchPhase.Ended)
+                {
+                    endTime = Time.time;
 
-                touchTime = endTime - startTime;
-            }
+                    touchTime = endTime - startTime;
+                }
 
-            if (touchTime < 0.5f && !isDropped)
-            {
-                DropBlock();
-                isDropped = true;
+                if (touchTime < 0.5f && !isDropped)
+                {
+                    DropBlock();
+                    isDropped = true;
+                }
             }
         }
     }
@@ -108,7 +140,7 @@ public class GameManager : MonoBehaviour
         }
 
         blockSpawned.name = "Block" + blockCount;
-        //blockSpawned.GetComponent<MeshRenderer>().material.color = Random.ColorHSV();
+        
         blockSpawned.GetComponent<Transform>().localScale = new Vector3(scale, scale, scale);
 
         blockRB = blockSpawned.GetComponent<Rigidbody>();
@@ -184,14 +216,9 @@ public class GameManager : MonoBehaviour
 
     public void AddScore(GameObject block)
     {
-        float distanceToMiddle;
-
-        Debug.Log(block.transform.position);
-        if (blockPrev2 != null)
-        {
-            Debug.Log(blockPrev2.transform.position);
-        }
+        AudioManager.instance.PlaySFX("Score");
         
+        float distanceToMiddle;        
 
         if (!changeMovePos)
         {
@@ -204,16 +231,14 @@ public class GameManager : MonoBehaviour
                 distanceToMiddle = block.transform.position.x - 0;
             }
             
-            Debug.Log("X : " + distanceToMiddle);
 
             if (distanceToMiddle <= 0.15 && distanceToMiddle >= -0.15)
             {
-                Debug.Log("2");
+                AudioManager.instance.PlaySFX("BonusScore");
                 score += 2;
             }
             else
             {
-                Debug.Log("1");
                 score++;
             }
         }
@@ -227,17 +252,14 @@ public class GameManager : MonoBehaviour
             {
                 distanceToMiddle = block.transform.position.z - 0;
             }
-            
-            Debug.Log("Z : " + distanceToMiddle);
 
             if (distanceToMiddle <= 0.15 && distanceToMiddle >= -0.15)
             {
-                Debug.Log("2");
+                AudioManager.instance.PlaySFX("BonusScore");
                 score += 2;
             }
             else
             {
-                Debug.Log("1");
                 score++;
             }
         }
@@ -248,5 +270,13 @@ public class GameManager : MonoBehaviour
         }
 
         scoreTextInGame.text = score.ToString();
+    }
+
+    public void ShowResult()
+    {
+        ResultScreen.SetActive(true);
+
+        scoreTextResult.text = "Score:\n" + score;
+        highScoreText.text = "High\nScore:\n" + highScore;
     }
 }
