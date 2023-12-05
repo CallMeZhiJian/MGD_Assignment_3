@@ -1294,6 +1294,7 @@ MonoBehaviour:
   PauseScreen: {fileID: 0}
   isPaused: 0
   ResultScreen: {fileID: 0}
+  RewardScreen: {fileID: 0}
 --- !u!1 &1998911824
 GameObject:
   m_ObjectHideFlags: 0

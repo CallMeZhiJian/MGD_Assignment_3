@@ -15,7 +15,7 @@ public class GameManager : UIManager
     public GameObject blockPrefab;
     private GameObject blockSpawned;
     [HideInInspector] public GameObject blockPrev;
-    private GameObject blockPrev2;
+    [HideInInspector] public GameObject blockPrev2;
     private Rigidbody blockRB;
 
     //Moving Position
@@ -37,8 +37,9 @@ public class GameManager : UIManager
     [HideInInspector] public float speed = 2;
     [HideInInspector] public float scale = 3;
     private int score;
-    private int highScore;
+    public static int highScore;
     private int blockCount;
+    public static int streakCount;
 
     public static bool isRewarded;
 
@@ -70,6 +71,7 @@ public class GameManager : UIManager
         isRewarded = false;
         
         blockCount = 0;
+        streakCount = 0;
         speed = 2;
         scale = 3;
         score = 0;
@@ -132,6 +134,12 @@ public class GameManager : UIManager
 
     public void SpawnBlock()
     {
+        if (streakCount >= 3)
+        {
+            Mathf.Clamp(scale, 0.5f, 3f);
+            scale += 0.1f;
+        }
+
         blockCount++;
 
         if (blockPrev != null)
@@ -252,10 +260,12 @@ public class GameManager : UIManager
             {
                 AudioManager.instance.PlaySFX("BonusScore");
                 score += 2;
+                streakCount++;
             }
             else
             {
                 score++;
+                streakCount = 0;
             }
         }
         else
@@ -273,10 +283,12 @@ public class GameManager : UIManager
             {
                 AudioManager.instance.PlaySFX("BonusScore");
                 score += 2;
+                streakCount++;
             }
             else
             {
                 score++;
+                streakCount = 0;
             }
         }
 
