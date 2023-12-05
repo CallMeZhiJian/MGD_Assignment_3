@@ -37,7 +37,18 @@ public class Block : MonoBehaviour
     {
         if (other.CompareTag("Finish"))
         {
-            gameManager.ShowResult();
+            if (!GameManager.isRewarded)
+            {
+                gameManager.ShowReward();
+                GameManager.isRewarded = true;
+            }
+            else
+            {
+                gameManager.ShowResult();
+            }
+            
+
+            Destroy(this);
         }
     }
 }

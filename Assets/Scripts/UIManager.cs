@@ -18,6 +18,8 @@ public class UIManager : MonoBehaviour
     public bool isPaused;
     [HideInInspector]
     public GameObject ResultScreen;
+    [HideInInspector]
+    public GameObject RewardScreen;
 
     private void Start()
     {

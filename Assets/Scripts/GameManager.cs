@@ -4,10 +4,12 @@ using UnityEngine;
 using TMPro;
 using Cinemachine;
 using UnityEngine.UI;
+using UnityEngine.Advertisements;
 
 public class GameManager : UIManager
 {
     public CinemachineVirtualCamera CineCam;
+    public RewardedAdsButton rewardedAdsButton;
 
     //Reference for blocks
     public GameObject blockPrefab;
@@ -38,6 +40,8 @@ public class GameManager : UIManager
     private int highScore;
     private int blockCount;
 
+    public static bool isRewarded;
+
     //UI stuffs
     public TextMeshProUGUI scoreTextInGame;
     public TextMeshProUGUI scoreTextResult;
@@ -46,18 +50,24 @@ public class GameManager : UIManager
     private void Start()
     {
         CineCam = GameObject.Find("CineCam").GetComponent<CinemachineVirtualCamera>();
+
+        blockPrev2 = GameObject.Find("StartingBlock");
+
         SoundButton = GameObject.Find("SoundButton");
         PauseButton = GameObject.Find("PauseButton");
         PauseScreen = GameObject.Find("PauseScreen");
         ResultScreen = GameObject.Find("ResultScreen");
+        RewardScreen = GameObject.Find("RewardScreen");
 
         PauseScreen.SetActive(false);
         ResultScreen.SetActive(false);
+        RewardScreen.SetActive(false);
 
         Time.timeScale = 1;
 
         isDropped = false;
         changeMovePos = true;
+        isRewarded = false;
         
         blockCount = 0;
         speed = 2;
@@ -69,6 +79,11 @@ public class GameManager : UIManager
         SpawnBlock();
 
         AudioManager.instance.PlayBGM();
+
+        if (Advertisement.isInitialized)
+        {
+            rewardedAdsButton.LoadAd();
+        }
     }
 
     private void Update()
@@ -118,6 +133,7 @@ public class GameManager : UIManager
     public void SpawnBlock()
     {
         blockCount++;
+
         if (blockPrev != null)
         {
             movePositionParent.transform.position = new Vector3(blockPrev.transform.position.x, movePositionParent.transform.position.y + scale, blockPrev.transform.position.z);
@@ -127,7 +143,7 @@ public class GameManager : UIManager
             movePositionParent.transform.position = new Vector3(movePositionParent.transform.position.x, movePositionParent.transform.position.y + scale, movePositionParent.transform.position.z);
         }
         
-
+        
         if (changeMovePos)
         {
             Vector3 pos = new(movePosLeft[0].transform.position.x, movePositionParent.transform.position.y, movePosLeft[0].transform.position.z);
@@ -274,9 +290,27 @@ public class GameManager : UIManager
 
     public void ShowResult()
     {
+        RewardScreen.SetActive(false);
         ResultScreen.SetActive(true);
 
         scoreTextResult.text = "Score:\n" + score;
         highScoreText.text = "High\nScore:\n" + highScore;
+    }
+    
+    public void ShowReward()
+    {
+        RewardScreen.SetActive(true);
+    }
+
+    public void WatchAdsRewards()
+    {
+        RewardScreen.SetActive(false);
+
+        Destroy(blockPrev.gameObject);
+
+        blockPrev = blockPrev2;
+        
+        movePositionParent.transform.position = new Vector3(blockPrev.transform.position.x, movePositionParent.transform.position.y - scale, blockPrev.transform.position.z);
+        SpawnBlock();
     }
 }
